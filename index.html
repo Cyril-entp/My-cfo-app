@@ -5891,8 +5891,10 @@ function renderVault() {
 
 /* ─── PIN 设置首次界面 ─── */
 function renderVaultSetPin(scroll) {
-  state._vaultPinStage = 'set1';  // set1 → set2
+  // BUG FIX: 明确初始化 stage 三态
+  state._vaultPinStage = 'set1';
   state._vaultPinFirst = '';
+  state._vaultCurrentInput = '';
   scroll.innerHTML = `
     <div class="vault-lock-screen">
       <div class="vault-lock-icon">
@@ -5923,6 +5925,9 @@ function renderVaultSetPin(scroll) {
 
 /* ─── PIN 解锁界面 ─── */
 function renderVaultLockScreen(scroll, isError) {
+  // BUG FIX: 明确设置解锁模式 stage，防止残留 set1/set2
+  state._vaultPinStage = 'unlock';
+  state._vaultCurrentInput = '';
   scroll.innerHTML = `
     <div class="vault-lock-screen">
       <div class="vault-lock-icon">
@@ -5950,7 +5955,6 @@ function renderVaultLockScreen(scroll, isError) {
     </div>
     <div class="bottom-pad" style="height:24px;"></div>
   `;
-  state._vaultCurrentInput = '';
 }
 
 /* ─── PIN 输入逻辑 ─── */
@@ -5980,12 +5984,19 @@ function vaultUpdateDots(len) {
   }
 }
 
+/**
+ * PIN 输入完成处理
+ * BUG FIX v6.2.1:
+ *   - 原逻辑用 !vaultPinSet 判断分支，导致 set2 永远到不了（vaultPinSet 在 set2 仍是 false）
+ *   - 原逻辑 renderVaultLockScreen 未重置 _vaultPinStage，导致残留 'set2'
+ *   - 修复：完全依赖 _vaultPinStage 三态（'set1' / 'set2' / 'unlock'）驱动流程
+ */
 function vaultHandleComplete(pin) {
   const scroll = document.getElementById('vault-scroll');
   const stage = state._vaultPinStage;
 
-  if (!state.vaultPinSet || stage === 'set1') {
-    // 设置模式 - 第一次输入
+  // ─── 首次设置：第一次输入 ───
+  if (stage === 'set1') {
     state._vaultPinFirst = pin;
     state._vaultPinStage = 'set2';
     state._vaultCurrentInput = '';
@@ -5995,15 +6006,17 @@ function vaultHandleComplete(pin) {
     return;
   }
 
+  // ─── 首次设置：确认输入 ───
   if (stage === 'set2') {
-    // 设置模式 - 确认
     if (pin === state._vaultPinFirst) {
       vaultSavePin(pin);
       state.vaultLocked = false;
-      state._vaultPinStage = null;
+      state._vaultPinStage = 'unlock';
+      state._vaultPinFirst = '';
       showToast('PIN 码设置成功 🔓');
       renderVaultList(scroll);
     } else {
+      // 两次不一致，重新来
       state._vaultPinStage = 'set1';
       state._vaultCurrentInput = '';
       state._vaultPinFirst = '';
@@ -6014,14 +6027,21 @@ function vaultHandleComplete(pin) {
     return;
   }
 
-  // 解锁模式
-  if (vaultCheckPin(pin)) {
-    state.vaultLocked = false;
-    renderVaultList(scroll);
-  } else {
-    state._vaultCurrentInput = '';
-    renderVaultLockScreen(scroll, true);
+  // ─── 解锁模式 ───
+  if (stage === 'unlock') {
+    if (vaultCheckPin(pin)) {
+      state.vaultLocked = false;
+      renderVaultList(scroll);
+    } else {
+      state._vaultCurrentInput = '';
+      renderVaultLockScreen(scroll, true);
+    }
+    return;
   }
+
+  // stage 未定义时的安全兜底（不应该发生）
+  console.warn('vaultHandleComplete: unexpected stage', stage);
+  state._vaultCurrentInput = '';
 }
 
 /* ─── 保险库列表 ─── */
