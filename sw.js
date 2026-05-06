@@ -1,9 +1,9 @@
 /* ════════════════════════════════════════════════════════════
-   PSCFO Service Worker v6.5
+   PSCFO Service Worker v6.6
    策略: Cache First for app shell, Network First for data
    ════════════════════════════════════════════════════════════ */
 
-const CACHE_NAME = 'pscfo-v6.5';
+const CACHE_NAME = 'pscfo-v6.6';
 const SHELL_FILES = [
   './',
   './index.html',
@@ -12,7 +12,7 @@ const SHELL_FILES = [
 
 // 安装：预缓存 App Shell
 self.addEventListener('install', event => {
-  console.log('[SW] Install v6.5');
+  console.log('[SW] Install v6.6');
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
       return cache.addAll(SHELL_FILES);
@@ -22,7 +22,7 @@ self.addEventListener('install', event => {
 
 // 激活：清理旧版缓存
 self.addEventListener('activate', event => {
-  console.log('[SW] Activate v6.5');
+  console.log('[SW] Activate v6.6');
   event.waitUntil(
     caches.keys().then(keys =>
       Promise.all(
