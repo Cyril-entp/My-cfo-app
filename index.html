@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <!--
 ═══════════════════════════════════════════════════════════════════
   PERSONAL SUBSCRIPTION CFO  ·  v6.1
@@ -52,8 +51,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#F2F2F7">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="PSCFO">
+
+<!-- PWA Manifest -->
+<link rel="manifest" href="manifest.json">
+
+<!-- iOS PWA 图标（SVG 转 data URI，无需额外文件） -->
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='115' fill='%236B0F1A'/%3E%3Cdefs%3E%3ClinearGradient id='g1' x1='80' y1='200' x2='280' y2='360' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0%25' stop-color='%23A8324E'/%3E%3Cstop offset='100%25' stop-color='%234A0A12'/%3E%3C/linearGradient%3E%3ClinearGradient id='g2' x1='230' y1='140' x2='430' y2='320' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0%25' stop-color='%23E5C97A'/%3E%3Cstop offset='100%25' stop-color='%23B8923D'/%3E%3C/linearGradient%3E%3ClinearGradient id='g3' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0%25' stop-color='%23E5C97A'/%3E%3Cstop offset='100%25' stop-color='%23B8923D'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M 80 290 C 80 230 148 185 210 222 C 245 243 247 275 248 277' stroke='url(%23g1)' stroke-width='34' stroke-linecap='round' fill='none'/%3E%3Cpath d='M 80 290 C 80 345 148 375 210 347 C 242 332 246 305 248 277' stroke='url(%23g1)' stroke-width='34' stroke-linecap='round' fill='none'/%3E%3Cpath d='M 248 277 C 248 277 248 244 284 222 C 348 185 418 225 418 290' stroke='url(%23g2)' stroke-width='34' stroke-linecap='round' fill='none'/%3E%3Cpath d='M 248 277 C 250 308 260 328 284 347 C 348 375 418 345 418 290' stroke='url(%23g2)' stroke-width='34' stroke-linecap='round' fill='none'/%3E%3Crect x='308' y='130' width='26' height='65' rx='6' fill='url(%23g3)'/%3E%3Crect x='354' y='100' width='26' height='95' rx='6' fill='url(%23g3)'/%3E%3Crect x='400' y='68' width='26' height='127' rx='6' fill='url(%23g3)'/%3E%3C/svg%3E">
+
+<!-- iOS 启动画面背景色 -->
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Personal Subscription CFO</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -6439,14 +6446,42 @@ function loadDemoData() {
     const d = new Date(today.getTime() + days * 86400000);
     return d.toISOString().slice(0, 10);
   };
+  // V6.3: 真实订阅数据（来源：Apple 订阅截图 2025-05-06）
+  // 续费日基于截图日期 5月6日计算偏移
   state.subs = [
-    { id: uid(), name: 'ChatGPT Plus', vendor: 'OpenAI', amount: 20, currency: 'USD', billing_cycle: 'monthly', next_renewal_date: future(3), category: 'ai_tool', priority: 'essential', usage_level: 'high', notes: '主力 AI 工具', created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-    { id: uid(), name: 'Claude Pro', vendor: 'Anthropic', amount: 20, currency: 'USD', billing_cycle: 'monthly', next_renewal_date: future(14), category: 'ai_tool', priority: 'essential', usage_level: 'high', notes: '设计与写作辅助', created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-    { id: uid(), name: 'Notion Plus', vendor: 'Notion', amount: 165, currency: 'CNY', billing_cycle: 'monthly', next_renewal_date: future(3), category: 'productivity', priority: 'observe', usage_level: 'low', notes: '与 Claude 部分功能重叠', created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-    { id: uid(), name: 'Figma Professional', vendor: 'Figma', amount: 15, currency: 'USD', billing_cycle: 'monthly', next_renewal_date: future(27), category: 'design', priority: 'important', usage_level: 'medium', notes: '', created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-    { id: uid(), name: 'Apple Music', vendor: 'Apple', amount: 11, currency: 'CNY', billing_cycle: 'monthly', next_renewal_date: future(43), category: 'streaming', priority: 'cancellable', usage_level: 'medium', notes: '', created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-    { id: uid(), name: 'Skillshare', vendor: 'Skillshare', amount: 30, currency: 'CNY', billing_cycle: 'monthly', next_renewal_date: future(20), category: 'productivity', priority: 'cancellable', usage_level: 'none', notes: '30 天未使用', created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-    { id: uid(), name: 'Adobe CC', vendor: 'Adobe', amount: 50, currency: 'CNY', billing_cycle: 'monthly', next_renewal_date: future(35), category: 'design', priority: 'observe', usage_level: 'low', notes: '本月珠宝设计任务用得到', created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+    // ── Apple 订阅（截图真实数据）──
+    {
+      id: uid(), name: 'ChatGPT', vendor: 'OpenAI',
+      amount: 100, currency: 'USD', billing_cycle: 'monthly',
+      next_renewal_date: future(7),   // 5月13日续期
+      category: 'ai_tool', priority: 'essential', usage_level: 'high',
+      notes: 'ChatGPT Pro 5x — Apple 订阅',
+      created_at: new Date().toISOString(), updated_at: new Date().toISOString()
+    },
+    {
+      id: uid(), name: 'Claude Pro', vendor: 'Anthropic',
+      amount: 20, currency: 'USD', billing_cycle: 'monthly',
+      next_renewal_date: future(10),  // 5月16日续期
+      category: 'ai_tool', priority: 'essential', usage_level: 'high',
+      notes: 'Claude Pro - Monthly — Apple 订阅',
+      created_at: new Date().toISOString(), updated_at: new Date().toISOString()
+    },
+    {
+      id: uid(), name: 'Google Gemini', vendor: 'Google',
+      amount: 7.99, currency: 'USD', billing_cycle: 'monthly',
+      next_renewal_date: future(10),  // 5月16日续期
+      category: 'ai_tool', priority: 'observe', usage_level: 'medium',
+      notes: 'Google AI Plus — Apple 订阅',
+      created_at: new Date().toISOString(), updated_at: new Date().toISOString()
+    },
+    {
+      id: uid(), name: 'Telegram Premium', vendor: 'Telegram',
+      amount: 4.99, currency: 'USD', billing_cycle: 'monthly',
+      next_renewal_date: future(10),  // 5月16日续期
+      category: 'communication', priority: 'important', usage_level: 'high',
+      notes: 'Telegram Messenger Premium — Apple 订阅',
+      created_at: new Date().toISOString(), updated_at: new Date().toISOString()
+    },
   ];
   saveData();
   showToast('已载入 ' + state.subs.length + ' 笔演示订阅');
@@ -6486,5 +6521,19 @@ attachSegmentedHandlers();
 renderHome();
 </script>
 
+<script>
+/* ════════════════════════════════════════════════════════════
+   V6.3 PWA — Service Worker 注册
+   ════════════════════════════════════════════════════════════ */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').then(reg => {
+      console.log('SW registered:', reg.scope);
+    }).catch(err => {
+      console.log('SW registration failed:', err);
+    });
+  });
+}
+</script>
 </body>
 </html>
